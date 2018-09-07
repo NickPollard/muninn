@@ -1,20 +1,26 @@
 #pragma once
 
 class PassthroughAllocator {
-  heapAllocator* heap;
-  size_t totalBytesAllocated;
-  size_t allocations;
+  public:
+    // Allocate `size` memory through the passthroughAllocator P
+    // (The allocation is actually in the underlying heap)
+    void* allocate( size_t size, const char* source );
 
-  // Create a new passthrough allocator using the given HEAP
-  PassthroughAllocator( heapAllocator* heap );
+    // Deallocate allocation `mem` from passthroughAllocator P
+    // (The allocation is actually in the underlying heap)
+    void deallocate( void* mem );
 
-  // Allocate `size` memory through the passthroughAllocator P
-  // (The allocation is actually in the underlying heap)
-  void* allocate( size_t size, const char* source );
+    // Create a new passthrough allocator using the given HEAP
+    PassthroughAllocator( heapAllocator* heap ) :
+      heap( heap ),
+      allocatedBytes( 0 ),
+      allocations( 0 )
+    {}
 
-  // Deallocate allocation `mem` from passthroughAllocator P
-  // (The allocation is actually in the underlying heap)
-  void deallocate( void* mem );
+  private:
+    heapAllocator* heap;
+    size_t totalBytesAllocated;
+    size_t allocations;
 };
 
 

@@ -1,13 +1,23 @@
-// bitpool.h
+#pragma once
 
-typedef struct bitpool_s { 
-	size_t		block_size;		// How big each block is (in BYTES)
-	size_t		block_count;	// How many blocks we have
-	uint8_t*	arena;			// Pointer to a memory arena of size equal to ( BLOCK_SIZE * BLOCK_COUNT )
-	void*		first_free;
-} bitpool;
+#include <cstddef.h>
+#include <cstdint.h>
 
-void*	bitpool_allocate( bitpool* b, size_t size );
-void	bitpool_free( bitpool* b, void* data );
-bitpool	bitpool_create( size_t size, size_t count, void* arena );
-bool	bitpool_contains( bitpool* b, void* data );
+class BitPool {
+  public:
+    void* allocate( size_t size );
+
+    void free( void* data );
+
+    bool contains( void* data );
+
+    BitPool( size_t size, size_t count, void* arena );
+
+  private:
+    size_t bytesPerBlock;
+    size_t blockCount;
+    uint8_t* arena; // Pointer to a memory arena of size equal to ( bytesPerBlock * blockCount )
+    void* firstFree;
+
+    void initFree();
+};
