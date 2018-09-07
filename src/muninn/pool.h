@@ -1,10 +1,31 @@
-// pool.h
-
 // An object pool, for fixed size objects
 
 #pragma once
 
-#include "mem/allocator.h"
+#include "allocator.h"
+
+// TODO - can we use a BitPool underneath as our backing store?
+
+template<typename T>
+class ObjectPool {
+	public:
+		// Return a single new `T` from the pool
+    T* allocate();
+		// TODO - we should be able to forward to the actual constructor in a single go here, using C++17
+
+		// Free a `T` from the pool
+    void free( T* entry );
+
+    ObjectPool( int _size ) : size( _size ) {
+			// TODO - actually we should allocate as a single contiguous block of memory? Also deal with alignment!
+			pool = mem_alloc( sizeof( T ) * size );
+		}
+	private:
+	  size_t size;
+	  bool* free;
+		// TODO this should probably be some kind of array type, perhaps from my base library
+	  T* pool;
+};
 
 // Implementation Macro
 // ( Place in a .h file )
